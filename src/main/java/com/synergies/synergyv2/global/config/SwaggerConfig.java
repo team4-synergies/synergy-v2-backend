@@ -1,4 +1,4 @@
-package com.synergies.synergyv2.config;
+package com.synergies.synergyv2.global.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
