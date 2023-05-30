@@ -55,12 +55,12 @@ public class FileService {
     }
 
     public void deleteFile(boolean manager, String storedFileName) throws AmazonServiceException {
-        String folder;
+        String filePath;
         if(manager)
-            folder = "admin/";
+            filePath = "/admin/"+storedFileName;
         else
-            folder = "student/";
+            filePath = "/student/"+storedFileName;
 
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket+"/"+folder, storedFileName));
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, bucket+filePath));
     }
 }
