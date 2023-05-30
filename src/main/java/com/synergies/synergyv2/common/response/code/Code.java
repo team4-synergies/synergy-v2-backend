@@ -1,4 +1,4 @@
-package com.synergies.synergyv2.global.common.response.code;
+package com.synergies.synergyv2.common.response.code;
 
 import org.springframework.http.HttpStatus;
 

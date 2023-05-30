@@ -1,7 +1,7 @@
-package com.synergies.synergyv2.global.common.response.exception;
+package com.synergies.synergyv2.common.response.exception;
 
-import com.synergies.synergyv2.global.common.response.CommonResponse;
-import com.synergies.synergyv2.global.common.response.code.Code;
+import com.synergies.synergyv2.common.response.CommonResponse;
+import com.synergies.synergyv2.common.response.code.Code;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

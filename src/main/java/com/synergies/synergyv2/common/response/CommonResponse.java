@@ -1,8 +1,8 @@
-package com.synergies.synergyv2.global.common.response;
+package com.synergies.synergyv2.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.synergies.synergyv2.global.common.response.code.Code;
-import com.synergies.synergyv2.global.common.response.code.CommonCode;
+import com.synergies.synergyv2.common.response.code.Code;
+import com.synergies.synergyv2.common.response.code.CommonCode;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
