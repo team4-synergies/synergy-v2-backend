@@ -59,12 +59,33 @@ public class TodoController {
     @Operation(summary = "id로 투두 수정")
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<CommonResponse> NotificationUpdate(@PathVariable("id") int id, @RequestBody TodoDto todoDto) {
+    public ResponseEntity<CommonResponse> TodoUpdate(@PathVariable("id") int id, @RequestBody TodoDto todoDto) {
         log.info("TodoUpdate");
         try {
             TodoDto todo = todoService.getTodoById(id);
             TodoEntity oldEntity = todo.toTodoEntity();
             oldEntity.updateTodo(todoDto.getContent(), todoDto.getEndDate());
+            todoRepository.save(oldEntity);
+        } catch (Exception e) {
+            throw new DefaultException(NOT_FOUND);
+        }
+        return ResponseEntity.ok((CommonResponse.toResponse(OK)));
+    }
+
+    @Operation(summary = "id로 투두 is_check 수정")
+    @PutMapping("/check/{id}")
+    @Transactional
+    public ResponseEntity<CommonResponse> TodoIsCheckUpdate(@PathVariable("id") int id) {
+        log.info("TodoIsCheckUpdate");
+        try {
+            TodoDto todo = todoService.getTodoById(id);
+            TodoEntity oldEntity = todo.toTodoEntity();
+
+            if(todo.getIsCheck().equals("false"))
+                oldEntity.updateCheckTodo("true");
+            else
+                oldEntity.updateCheckTodo("false");
+
             todoRepository.save(oldEntity);
         } catch (Exception e) {
             throw new DefaultException(NOT_FOUND);

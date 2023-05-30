@@ -14,13 +14,14 @@ public class TodoDto {
     private int id;
     private String refUserId;
     private String content;
-    private boolean is_check;
+    private String isCheck;
     private LocalDate regDate;
     private String endDate;
     public TodoEntity toTodoEntity(){
         return TodoEntity.builder()
                 .id(id)
                 .refUserId(refUserId)
+                .isCheck(isCheck)
                 .content(content)
                 .regDate(regDate)
                 .endDate(endDate)

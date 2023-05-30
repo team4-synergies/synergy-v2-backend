@@ -23,7 +23,7 @@ public class TodoEntity {
     private int id;
     private String refUserId;
     private String content;
-    private boolean is_check;
+    private String isCheck;
     @CreatedDate
     @Column(updatable = false)
     private LocalDate regDate;
@@ -33,6 +33,7 @@ public class TodoEntity {
         return TodoDto.builder()
                 .id(id)
                 .refUserId(refUserId)
+                .isCheck(isCheck)
                 .content(content)
                 .regDate(regDate)
                 .endDate(endDate)
@@ -42,6 +43,10 @@ public class TodoEntity {
     public void updateTodo(String content, String endDate){
         this.content = content;
         this.endDate = endDate;
+    }
+
+    public void updateCheckTodo(String isCheck){
+        this.isCheck = isCheck;
     }
 
 }
