@@ -4,12 +4,16 @@ import com.synergies.synergyv2.common.response.CommonResponse;
 import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.config.S3.FileService;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
+import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
+import com.synergies.synergyv2.repository.mapping.AssignmentMapping;
 import com.synergies.synergyv2.service.AssignmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,6 +48,13 @@ public class AssignmentController {
     public ResponseEntity<CommonResponse> deleteAssignment(@PathVariable("id") int id) {
         assignmentService.deleteAssignment(id);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.NO_CONTENT));
+    }
+
+    @Operation(summary = "전체 과제 리스트 조회")
+    @GetMapping
+    public ResponseEntity<CommonResponse> getAssignmentList() {
+        List<AssignmentResponseDto.AssignmentList> assignmentList = assignmentService.getAssignmentList();
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignmentList));
     }
 
 }

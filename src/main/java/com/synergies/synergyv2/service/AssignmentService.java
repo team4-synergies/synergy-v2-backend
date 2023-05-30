@@ -4,7 +4,9 @@ import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.common.response.exception.DefaultException;
 import com.synergies.synergyv2.config.S3.FileService;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
+import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
 import com.synergies.synergyv2.model.entity.AssignmentEntity;
+import com.synergies.synergyv2.repository.mapping.AssignmentMapping;
 import com.synergies.synergyv2.repository.AssignmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -75,5 +79,19 @@ public class AssignmentService {
 
         fileService.deleteFile(true, deleteAssign.getAssignmentFile());
         assignmentRepository.deleteById(id);
+    }
+
+    public List<AssignmentResponseDto.AssignmentList> getAssignmentList() {
+        List<AssignmentMapping> assignments = assignmentRepository.findAllProjectedBy();
+        List<AssignmentResponseDto.AssignmentList> assignList = new ArrayList<>();
+        for(AssignmentMapping assign : assignments) {
+            System.out.println("***" + assign.getRegDate());
+            assignList.add(AssignmentResponseDto.AssignmentList.builder()
+                                                .id(assign.getId())
+                                                .title(assign.getTitle())
+                                                .regDate((assign.getRegDate()).toString())
+                                                .build());
+        }
+        return assignList;
     }
 }
