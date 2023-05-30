@@ -15,4 +15,16 @@ public class AssignmentResponseDto {
         private String regDate;
     }
 
+
+    @Getter
+    @Setter
+    @Builder
+    public static class AssignmentDetail {
+        private int id;
+        private String title;
+        private String content;
+        private String assignmentFile;
+        private String regDate;
+        private String updateDate;
+    }
 }

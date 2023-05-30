@@ -1,6 +1,7 @@
 package com.synergies.synergyv2.model.entity;
 
 import com.synergies.synergyv2.common.BaseTime;
+import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,5 +31,16 @@ public class AssignmentEntity extends BaseTime {
         this.title = title;
         this.content = content;
         this.assignmentFile = file;
+    }
+
+    public AssignmentResponseDto.AssignmentDetail toDto() {
+        return AssignmentResponseDto.AssignmentDetail.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .assignmentFile(assignmentFile)
+                .regDate(getRegDate().toString())
+                .updateDate(getUpdateDate().toString())
+                .build();
     }
 }
