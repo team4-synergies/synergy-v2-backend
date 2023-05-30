@@ -4,10 +4,6 @@ import com.synergies.synergyv2.model.entity.AssignmentEntity;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@Builder
 public class AssignmentRequestDto {
 
     @Getter

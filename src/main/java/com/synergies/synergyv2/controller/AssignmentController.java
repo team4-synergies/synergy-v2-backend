@@ -5,7 +5,6 @@ import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.config.S3.FileService;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
-import com.synergies.synergyv2.repository.mapping.AssignmentMapping;
 import com.synergies.synergyv2.service.AssignmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
