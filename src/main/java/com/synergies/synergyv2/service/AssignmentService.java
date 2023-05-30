@@ -67,4 +67,13 @@ public class AssignmentService {
 
         assignmentRepository.save(assignEntity);
     }
+
+    @Transactional
+    public void deleteAssignment(int id) {
+        AssignmentEntity deleteAssign = assignmentRepository.findById(id)
+                .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
+
+        fileService.deleteFile(true, deleteAssign.getAssignmentFile());
+        assignmentRepository.deleteById(id);
+    }
 }
