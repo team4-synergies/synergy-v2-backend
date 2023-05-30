@@ -50,10 +50,16 @@ public class AssignmentController {
     }
 
     @Operation(summary = "전체 과제 리스트 조회")
-    @GetMapping
+    @GetMapping("/admin")
     public ResponseEntity<CommonResponse> getAssignmentList() {
         List<AssignmentResponseDto.AssignmentList> assignmentList = assignmentService.getAssignmentList();
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignmentList));
     }
 
+    @Operation(summary = "과제 상세 데이터 조회")
+    @GetMapping("/{id}/admin")
+    public ResponseEntity<CommonResponse> getAssignment(@PathVariable("id") int id) {
+        AssignmentResponseDto.AssignmentDetail assignment = assignmentService.getAssignment(id);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignment));
+    }
 }

@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class AssignmentService {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMddhhmm");
 
+    // 과제 등록
     @Transactional
     public void createAssignment(AssignmentRequestDto.AssignmentRegister assignment, MultipartFile file) {
         Date nowDate = new Date();
@@ -41,6 +43,7 @@ public class AssignmentService {
         assignmentRepository.save(assignEntity);
     }
 
+    // 과제 수정
     @Transactional
     public void updateAssignment(int id, AssignmentRequestDto.AssignmentRegister assignment, MultipartFile file) {
         Date nowDate = new Date();
@@ -72,6 +75,7 @@ public class AssignmentService {
         assignmentRepository.save(assignEntity);
     }
 
+    // 과제 삭제
     @Transactional
     public void deleteAssignment(int id) {
         AssignmentEntity deleteAssign = assignmentRepository.findById(id)
@@ -81,6 +85,7 @@ public class AssignmentService {
         assignmentRepository.deleteById(id);
     }
 
+    // 과제 리스트
     public List<AssignmentResponseDto.AssignmentList> getAssignmentList() {
         List<AssignmentMapping> assignments = assignmentRepository.findAllProjectedBy();
         List<AssignmentResponseDto.AssignmentList> assignList = new ArrayList<>();
@@ -93,5 +98,12 @@ public class AssignmentService {
                                                 .build());
         }
         return assignList;
+    }
+
+    // 과제 상세 데이터
+    public AssignmentResponseDto.AssignmentDetail getAssignment(int id) {
+        Optional<AssignmentEntity> assignEntity = assignmentRepository.findById(id);
+        AssignmentResponseDto.AssignmentDetail assignment = assignEntity.get().toDto();
+        return assignment;
     }
 }
