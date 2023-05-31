@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 public enum CommonCode implements Code{
     OK(HttpStatus.OK, "정상 처리"),
     CREATED(HttpStatus.CREATED,"새로운 리소스 생성"),
+    NO_CONTENT(HttpStatus.NO_CONTENT, "데이터가 없음"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST,"잘못된 요청"),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"인증되지 않은 요청"),
     FORBIDDEN(HttpStatus.FORBIDDEN,"접근 권한 부족"),
