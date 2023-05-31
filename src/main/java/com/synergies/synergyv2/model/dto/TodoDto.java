@@ -14,7 +14,7 @@ public class TodoDto {
     private int id;
     private String refUserId;
     private String content;
-    private String isCheck;
+    private int isCheck;
     private LocalDate regDate;
     private String endDate;
     public TodoEntity toTodoEntity(){
