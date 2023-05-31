@@ -1,6 +1,9 @@
 package com.synergies.synergyv2.service;
 
+import com.synergies.synergyv2.common.response.code.CommonCode;
+import com.synergies.synergyv2.common.response.exception.DefaultException;
 import com.synergies.synergyv2.model.dto.TodoDto;
+import com.synergies.synergyv2.model.entity.TodoEntity;
 import com.synergies.synergyv2.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +33,9 @@ public class TodoService {
 
 
     public TodoDto getTodoById(int id) {
-        return todoRepository.findById(id).get().toTodoDto();
+        TodoEntity todo = todoRepository.findById(id)
+                .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
+        return todo.toTodoDto();
     }
 
 }

@@ -1,6 +1,8 @@
 package com.synergies.synergyv2.controller;
 
+import com.synergies.synergyv2.common.TodoCode;
 import com.synergies.synergyv2.common.response.CommonResponse;
+import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.common.response.exception.DefaultException;
 import com.synergies.synergyv2.model.dto.TodoDto;
 import com.synergies.synergyv2.model.entity.TodoEntity;
@@ -15,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.util.List;
 
-import static com.synergies.synergyv2.common.response.code.CommonCode.NOT_FOUND;
-import static com.synergies.synergyv2.common.response.code.CommonCode.OK;
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -29,67 +28,69 @@ public class TodoController {
     @Operation(summary = "투두 저장")
     @PostMapping
     @Transactional
-    public ResponseEntity<CommonResponse> TodoAdd(@RequestBody TodoDto todoDto) {
+    public ResponseEntity<CommonResponse> TodoAdd(@RequestBody TodoDto todoDto) throws DefaultException{
         log.info("TodoAdd");
         todoService.createTodo(todoDto);
-        return ResponseEntity.ok((CommonResponse.toResponse(OK, "저장 성공")));
+        return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK, "저장 성공")));
     }
 
     @Operation(summary = "투두 조회")
     @GetMapping
     public ResponseEntity<CommonResponse> TodoList() {
         log.info("TodoList");
-        List<TodoDto> list = todoService.getAllTodo();
-        return ResponseEntity.ok((CommonResponse.toResponse(OK, list)));
+
+        try {
+            List<TodoDto> list = todoService.getAllTodo();
+            return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK, list)));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body((CommonResponse.toErrorResponse(CommonCode.INTERNAL_SERVER_ERROR)));
+        }
     }
 
     @Operation(summary = "id로 투두 삭제")
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse> TodoDelete(@PathVariable("id") int id) {
+    public ResponseEntity<CommonResponse> TodoDelete(@PathVariable("id") int id) throws DefaultException {
         log.info("TodoDelete");
-        try {
-            todoService.deleteById(id);
-        } catch (Exception e) {
-            throw new DefaultException(NOT_FOUND);
-        }
 
-        return ResponseEntity.ok((CommonResponse.toResponse(OK)));
+        todoService.deleteById(id);
+        return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK)));
     }
 
     @Operation(summary = "id로 투두 수정")
     @PutMapping("/{id}")
-    @Transactional
     public ResponseEntity<CommonResponse> TodoUpdate(@PathVariable("id") int id, @RequestBody TodoDto todoDto) {
         log.info("TodoUpdate");
+        TodoDto todo = todoService.getTodoById(id);
+        TodoEntity oldEntity = todo.toTodoEntity();
+
         try {
-            TodoDto todo = todoService.getTodoById(id);
-            TodoEntity oldEntity = todo.toTodoEntity();
             oldEntity.updateTodo(todoDto.getContent(), todoDto.getEndDate());
-            todoRepository.save(oldEntity);
         } catch (Exception e) {
-            throw new DefaultException(NOT_FOUND);
+            return ResponseEntity.internalServerError().body((CommonResponse.toErrorResponse(CommonCode.INTERNAL_SERVER_ERROR)));
         }
-        return ResponseEntity.ok((CommonResponse.toResponse(OK)));
+
+        todoRepository.save(oldEntity);
+        return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK)));
     }
 
     @Operation(summary = "id로 투두 is_check 수정")
     @PutMapping("/check/{id}")
-    @Transactional
     public ResponseEntity<CommonResponse> TodoIsCheckUpdate(@PathVariable("id") int id) {
         log.info("TodoIsCheckUpdate");
+        TodoDto todo = todoService.getTodoById(id);
+        TodoEntity oldEntity = todo.toTodoEntity();
+
         try {
-            TodoDto todo = todoService.getTodoById(id);
-            TodoEntity oldEntity = todo.toTodoEntity();
-
-            if(todo.getIsCheck().equals("false"))
-                oldEntity.updateCheckTodo("true");
+            if (TodoCode.N.getInteger() == todo.getIsCheck())
+                oldEntity.updateCheckTodo(TodoCode.Y.getInteger());
             else
-                oldEntity.updateCheckTodo("false");
-
-            todoRepository.save(oldEntity);
+                oldEntity.updateCheckTodo(TodoCode.N.getInteger());
         } catch (Exception e) {
-            throw new DefaultException(NOT_FOUND);
+            return ResponseEntity.internalServerError().body((CommonResponse.toErrorResponse(CommonCode.INTERNAL_SERVER_ERROR)));
         }
-        return ResponseEntity.ok((CommonResponse.toResponse(OK)));
+
+        todoRepository.save(oldEntity);
+
+        return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK)));
     }
 }
