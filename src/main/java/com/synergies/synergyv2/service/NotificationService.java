@@ -1,42 +1,64 @@
 package com.synergies.synergyv2.service;
 
 
+import com.synergies.synergyv2.common.PageRequestDto;
+import com.synergies.synergyv2.common.PageResponseDto;
+import com.synergies.synergyv2.common.response.CommonResponse;
+import com.synergies.synergyv2.common.response.code.CommonCode;
+import com.synergies.synergyv2.common.response.exception.DefaultException;
 import com.synergies.synergyv2.model.dto.NotificationDto;
+import com.synergies.synergyv2.model.entity.NotificationEntity;
 import com.synergies.synergyv2.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.synergies.synergyv2.common.response.code.CommonCode.OK;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
 
-    public void createNotification(NotificationDto notificationDto) {
+    public void createNotification(NotificationDto notificationDto) throws DefaultException {
         notificationRepository.save(notificationDto.toNotificationEntity());
     }
 
-    ;
-
-    public List<NotificationDto> getAllNotification() {
-        List<NotificationDto> list = notificationRepository.findAll().stream().map(i -> i.toNotificationDto()).collect(Collectors.toList());
-        return list;
-    }
-
-    ;
-
-    public List<NotificationDto> getAllNotificationByCategory(String category) {
-        List<NotificationDto> list = notificationRepository.findByCategory(category).stream().map(i -> i.toNotificationDto()).collect(Collectors.toList());
-        return list;
-    }
-
-    ;
-
+    @Transactional
     public void deleteById(int id) {
-        notificationRepository.deleteById(id);
+        try {
+            notificationRepository.deleteById(id);
+        } catch (RuntimeException e) {
+            throw new DefaultException(CommonCode.NOT_FOUND);
+        }
     }
 
-    public NotificationDto getNotificationById(int id) { return notificationRepository.findById(id).get().toNotificationDto(); };
+    @Transactional
+    public void updateNotificationById(int id, NotificationDto notificationDto){
+        try {
+            NotificationEntity oldEntity = notificationRepository.getById(id);
+            oldEntity.updateNotification(notificationDto.getTitle(), notificationDto.getContent(), notificationDto.getCategory());
+        } catch (RuntimeException e) {
+            throw new DefaultException(CommonCode.NOT_FOUND);
+        }
+    }
+
+
+    public ResponseEntity<CommonResponse> searchAllPaging(PageRequestDto pageRequestDto) throws DefaultException{
+        Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
+        Page<NotificationDto> notificationEntityPage;
+        if (pageRequestDto.getKeyword() != null) {
+            notificationEntityPage = notificationRepository.findByCategory(pageable, pageRequestDto.getKeyword()).map(notificationEntity -> notificationEntity.toNotificationDto());
+        } else {
+            notificationEntityPage = notificationRepository.findAll(pageable).map(notificationEntity -> notificationEntity.toNotificationDto());
+        }
+        return ResponseEntity.ok((CommonResponse.toResponse(OK, new PageResponseDto(pageable, notificationEntityPage))));
+    }
 }
