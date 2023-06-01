@@ -59,4 +59,13 @@ public class AssignmentResponseDto {
         private List<String> unSubmitList;
 
     }
+
+    @Getter
+    @Setter
+    @Builder
+    public static class CommentList {
+        private int id;
+        private String content;
+        private String regDate;
+    }
 }
