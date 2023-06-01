@@ -64,6 +64,7 @@ public class AssignmentStudentService {
         AssignmentSubmitEntity submitEntity = submitRepository.findById(id)
                                                 .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
         AssignmentResponseDto.SubmitDetail submitDetail = submitEntity.toDto();
+        submitDetail.setSubmitFile(fileService.getUrl()+"/student/"+submitDetail.getSubmitFile());
         return submitDetail;
     }
 }

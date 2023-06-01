@@ -13,7 +13,6 @@ import com.synergies.synergyv2.repository.AssignmentRepository;
 import com.synergies.synergyv2.repository.mapping.SubmitMapping;
 import com.synergies.synergyv2.repository.mapping.UserMapping;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,11 +32,7 @@ public class AssignmentService {
     private final AssignmentSubmitRepository submitRepository;
     private final UserRepository userRepository;
 
-    //bucketName
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd_hhmm");
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd_hhmmss");
 
     // 과제 등록
     @Transactional
@@ -101,8 +96,11 @@ public class AssignmentService {
 
     // 과제 상세 데이터
     public AssignmentResponseDto.AssignmentDetail getAssignment(int id) {
-        Optional<AssignmentEntity> assignEntity = assignmentRepository.findById(id);
-        AssignmentResponseDto.AssignmentDetail assignment = assignEntity.get().toDto();
+        AssignmentEntity assignEntity = assignmentRepository.findById(id)
+                                        .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
+
+        AssignmentResponseDto.AssignmentDetail assignment = assignEntity.toDto();
+        assignment.setAssignmentFile(fileService.getUrl()+"/admin/"+assignment.getAssignmentFile());
         return assignment;
     }
 
