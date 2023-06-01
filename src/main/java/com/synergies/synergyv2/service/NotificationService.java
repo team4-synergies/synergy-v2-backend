@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.synergies.synergyv2.common.response.code.CommonCode.OK;
 
@@ -32,7 +30,7 @@ public class NotificationService {
     }
 
     @Transactional
-    public void deleteById(int id) {
+    public void deleteNotification(int id) {
         try {
             notificationRepository.deleteById(id);
         } catch (RuntimeException e) {
@@ -41,7 +39,7 @@ public class NotificationService {
     }
 
     @Transactional
-    public void updateNotificationById(int id, NotificationDto notificationDto){
+    public void updateNotification(int id, NotificationDto notificationDto){
         try {
             NotificationEntity oldEntity = notificationRepository.getById(id);
             oldEntity.updateNotification(notificationDto.getTitle(), notificationDto.getContent(), notificationDto.getCategory());
@@ -51,7 +49,7 @@ public class NotificationService {
     }
 
 
-    public ResponseEntity<CommonResponse> searchAllPaging(PageRequestDto pageRequestDto) throws DefaultException{
+    public ResponseEntity<CommonResponse> getNotificationPaging(PageRequestDto pageRequestDto) throws DefaultException{
         Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
         Page<NotificationDto> notificationEntityPage;
         if (pageRequestDto.getKeyword() != null) {
