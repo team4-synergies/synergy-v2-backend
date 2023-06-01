@@ -2,8 +2,6 @@ package com.synergies.synergyv2.service;
 
 
 import com.synergies.synergyv2.common.PageRequestDto;
-import com.synergies.synergyv2.common.PageResponseDto;
-import com.synergies.synergyv2.common.response.CommonResponse;
 import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.common.response.exception.DefaultException;
 import com.synergies.synergyv2.model.dto.NotificationDto;
@@ -13,12 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
-import static com.synergies.synergyv2.common.response.code.CommonCode.OK;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +44,7 @@ public class NotificationService {
     }
 
 
-    public ResponseEntity<CommonResponse> getNotificationPaging(PageRequestDto pageRequestDto) throws DefaultException{
+    public Page<NotificationDto> getNotificationPaging(PageRequestDto pageRequestDto) throws DefaultException{
         Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
         Page<NotificationDto> notificationEntityPage;
         if (pageRequestDto.getKeyword() != null) {
@@ -57,6 +52,6 @@ public class NotificationService {
         } else {
             notificationEntityPage = notificationRepository.findAll(pageable).map(notificationEntity -> notificationEntity.toNotificationDto());
         }
-        return ResponseEntity.ok((CommonResponse.toResponse(OK, new PageResponseDto(pageable, notificationEntityPage))));
+        return notificationEntityPage;
     }
 }
