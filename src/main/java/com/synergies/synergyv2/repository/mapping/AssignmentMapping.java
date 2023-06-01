@@ -6,4 +6,5 @@ public interface AssignmentMapping {
     Integer getId();
     String getTitle();
     LocalDateTime getRegDate();
+
 }
