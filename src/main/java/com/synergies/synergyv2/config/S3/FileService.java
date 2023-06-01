@@ -6,8 +6,6 @@ import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,8 +33,6 @@ public class FileService {
         else {
             uploadPath = bucket + "/student/";
         }
-
-        //String fileName = '/' + userId + '/' + "main";
 
         try {
             ObjectMetadata metadata = new ObjectMetadata();
