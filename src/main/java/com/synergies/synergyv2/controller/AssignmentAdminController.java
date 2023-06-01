@@ -2,7 +2,6 @@ package com.synergies.synergyv2.controller;
 
 import com.synergies.synergyv2.common.response.CommonResponse;
 import com.synergies.synergyv2.common.response.code.CommonCode;
-import com.synergies.synergyv2.config.S3.FileService;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
 import com.synergies.synergyv2.service.AssignmentService;
@@ -17,18 +16,20 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/assignments")
-public class AssignmentController {
+public class AssignmentAdminController {
 
     private final AssignmentService assignmentService;
-
-    private final FileService fileService;
 
     @Operation(summary = "과제 등록")
     @PostMapping("/admin")
     public ResponseEntity<CommonResponse> createAssignment(@ModelAttribute AssignmentRequestDto.AssignmentRegister assignment,
                                                            @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        assignmentService.createAssignment(assignment, file);
+        if(!assignment.getTitle().isEmpty()) {
+            assignmentService.createAssignment(assignment, file);
+        }
+        // title이 빈값일 때 예외처리 추가
+        
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.CREATED));
     }
 
@@ -62,4 +63,17 @@ public class AssignmentController {
         AssignmentResponseDto.AssignmentDetail assignment = assignmentService.getAssignment(id);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignment));
     }
+
+    @Operation(summary = "과제 제출 현황 조회")
+    @GetMapping("/submit/{id}/admin")
+    public ResponseEntity<CommonResponse> getSubmitList(@PathVariable("id") int id) {
+        AssignmentResponseDto.AssignmentSubmitList submitLists = assignmentService.getSubmitList(id);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, submitLists));
+    }
+
+//    @Operation(summary = "오늘 등록한 과제 개수 조회")
+//    @GetMapping("/cnt")
+//    public ResponseEntity<CommonResponse> getCount() {
+//        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignmentService.getTodayCount()));
+//    }
 }
