@@ -5,6 +5,7 @@ import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
 import com.synergies.synergyv2.service.AssignmentService;
+import com.synergies.synergyv2.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 public class AssignmentAdminController {
 
     private final AssignmentService assignmentService;
+    private final CommentService commentService;
 
     @Operation(summary = "과제 등록")
     @PostMapping("/admin")
@@ -76,4 +78,26 @@ public class AssignmentAdminController {
 //    public ResponseEntity<CommonResponse> getCount() {
 //        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignmentService.getTodayCount()));
 //    }
+
+    @Operation(summary = "학생이 제출한 과제에 대한 코멘트 등록")
+    @PostMapping("/comment/{id}/admin")
+    public ResponseEntity<CommonResponse> createComment(@PathVariable("id") int id,
+                                                        @RequestPart String comment) {
+        commentService.createComment(id, comment);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.CREATED));
+    }
+
+    @Operation(summary = "학생이 제출한 과제에 대한 코멘트 삭제")
+    @DeleteMapping("/comment/{id}/admin")
+    public ResponseEntity<CommonResponse> deleteComment(@PathVariable("id") int id) {
+        commentService.deleteComment(id);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.NO_CONTENT));
+    }
+
+    @Operation(summary = "학생이 제출한 과제에 대한 코멘트 조회")
+    @GetMapping("/comment/{id}/admin")
+    public ResponseEntity<CommonResponse> getComment(@PathVariable("id") int id) {
+        List<AssignmentResponseDto.CommentList> commentList = commentService.getComment(id);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, commentList));
+    }
 }
