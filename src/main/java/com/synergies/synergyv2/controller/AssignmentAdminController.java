@@ -2,10 +2,10 @@ package com.synergies.synergyv2.controller;
 
 import com.synergies.synergyv2.common.response.CommonResponse;
 import com.synergies.synergyv2.common.response.code.CommonCode;
-import com.synergies.synergyv2.config.S3.FileService;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
 import com.synergies.synergyv2.service.AssignmentService;
+import com.synergies.synergyv2.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,25 +17,28 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/assignments")
-public class AssignmentController {
+public class AssignmentAdminController {
 
     private final AssignmentService assignmentService;
-
-    private final FileService fileService;
+    private final CommentService commentService;
 
     @Operation(summary = "과제 등록")
     @PostMapping("/admin")
-    public ResponseEntity<CommonResponse> createAssignment(@ModelAttribute AssignmentRequestDto.AssignmentRegister assignment,
+    public ResponseEntity<CommonResponse> createAssignment(@RequestPart AssignmentRequestDto assignment,
                                                            @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        assignmentService.createAssignment(assignment, file);
+        if(!assignment.getTitle().isEmpty()) {
+            assignmentService.createAssignment(assignment, file);
+        }
+        // title이 빈값일 때 예외처리 추가
+        
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.CREATED));
     }
 
     @Operation(summary = "과제 수정")
     @PutMapping("/{id}/admin")
     public ResponseEntity<CommonResponse> updateAssignment(@PathVariable("id") int id,
-                                                           @ModelAttribute AssignmentRequestDto.AssignmentRegister assignment,
+                                                           @RequestPart AssignmentRequestDto assignment,
                                                            @RequestPart(value = "file", required = false) MultipartFile file) {
 
         assignmentService.updateAssignment(id, assignment, file);
@@ -61,5 +64,40 @@ public class AssignmentController {
     public ResponseEntity<CommonResponse> getAssignment(@PathVariable("id") int id) {
         AssignmentResponseDto.AssignmentDetail assignment = assignmentService.getAssignment(id);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignment));
+    }
+
+    @Operation(summary = "과제 제출 현황 조회")
+    @GetMapping("/submit/{id}/admin")
+    public ResponseEntity<CommonResponse> getSubmitList(@PathVariable("id") int id) {
+        AssignmentResponseDto.AssignmentSubmitList submitLists = assignmentService.getSubmitList(id);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, submitLists));
+    }
+
+    @Operation(summary = "오늘 등록한 과제 개수 조회")
+    @GetMapping("/cnt")
+    public ResponseEntity<CommonResponse> getCount() {
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignmentService.getTodayCount()));
+    }
+
+    @Operation(summary = "학생이 제출한 과제에 대한 코멘트 등록")
+    @PostMapping("/comment/{id}/admin")
+    public ResponseEntity<CommonResponse> createComment(@PathVariable("id") int id,
+                                                        @RequestPart String comment) {
+        commentService.createComment(id, comment);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.CREATED));
+    }
+
+    @Operation(summary = "학생이 제출한 과제에 대한 코멘트 삭제")
+    @DeleteMapping("/comment/{id}/admin")
+    public ResponseEntity<CommonResponse> deleteComment(@PathVariable("id") int id) {
+        commentService.deleteComment(id);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.NO_CONTENT));
+    }
+
+    @Operation(summary = "학생이 제출한 과제에 대한 코멘트 조회")
+    @GetMapping("/comment/{id}/admin")
+    public ResponseEntity<CommonResponse> getComment(@PathVariable("id") int id) {
+        List<AssignmentResponseDto.CommentList> commentList = commentService.getComment(id);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, commentList));
     }
 }

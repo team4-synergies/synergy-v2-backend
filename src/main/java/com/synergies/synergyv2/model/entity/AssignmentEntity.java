@@ -27,12 +27,6 @@ public class AssignmentEntity extends BaseTime {
 
     private String assignmentFile;
 
-    public AssignmentEntity(String title, String content, String file) {
-        this.title = title;
-        this.content = content;
-        this.assignmentFile = file;
-    }
-
     public AssignmentResponseDto.AssignmentDetail toDto() {
         return AssignmentResponseDto.AssignmentDetail.builder()
                 .id(id)
@@ -42,5 +36,11 @@ public class AssignmentEntity extends BaseTime {
                 .regDate(getRegDate().toString())
                 .updateDate(getUpdateDate().toString())
                 .build();
+    }
+
+    public void updateAssignment(String title, String content, String file) {
+        this.title = title;
+        this.content = content;
+        this.assignmentFile = file;
     }
 }

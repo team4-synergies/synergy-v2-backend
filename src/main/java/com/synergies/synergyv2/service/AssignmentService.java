@@ -6,19 +6,22 @@ import com.synergies.synergyv2.config.S3.FileService;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
 import com.synergies.synergyv2.model.entity.AssignmentEntity;
+import com.synergies.synergyv2.repository.AssignmentSubmitRepository;
+import com.synergies.synergyv2.repository.UserRepository;
 import com.synergies.synergyv2.repository.mapping.AssignmentMapping;
 import com.synergies.synergyv2.repository.AssignmentRepository;
+import com.synergies.synergyv2.repository.mapping.SubmitMapping;
+import com.synergies.synergyv2.repository.mapping.UserMapping;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,53 +29,45 @@ public class AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
     private final FileService fileService;
+    private final AssignmentSubmitRepository submitRepository;
+    private final UserRepository userRepository;
 
-    //bucketName
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMddhhmm");
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd_hhmmss");
 
     // 과제 등록
     @Transactional
-    public void createAssignment(AssignmentRequestDto.AssignmentRegister assignment, MultipartFile file) {
-        Date nowDate = new Date();
-        String fileName = simpleDateFormat.format(nowDate);
-        fileService.uploadFile(fileName, true, file);
+    public void createAssignment(AssignmentRequestDto assignment, MultipartFile file) {
+
+        String fileName = "";
+
+        if(assignment.getContent() == null)
+            assignment.setContent("");
+
+        if(assignment.getFile() != null) {
+            Date nowDate = new Date();
+            fileName = simpleDateFormat.format(nowDate);
+            fileService.uploadFile(fileName, true, file);
+        }
+
         AssignmentEntity assignEntity = assignment.toEntity(fileName);
         assignmentRepository.save(assignEntity);
     }
 
     // 과제 수정
     @Transactional
-    public void updateAssignment(int id, AssignmentRequestDto.AssignmentRegister assignment, MultipartFile file) {
+    public void updateAssignment(int id, AssignmentRequestDto assignment, MultipartFile file) {
         Date nowDate = new Date();
-        AssignmentEntity beforeAssign = assignmentRepository.findById(id)
+        AssignmentEntity updateAssign = assignmentRepository.findById(id)
                                         .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
 
-        AssignmentEntity assignEntity;
         if(file == null) {
-            assignEntity = AssignmentEntity.builder()
-                            .id(id)
-                            .title(assignment.getTitle())
-                            .content(assignment.getContent())
-                            .assignmentFile(beforeAssign.getAssignmentFile())
-                            .build();
+            updateAssign.updateAssignment(assignment.getTitle(), assignment.getContent(), updateAssign.getAssignmentFile());
         } else {
             String fileName = simpleDateFormat.format(nowDate);
-            fileService.deleteFile(true, beforeAssign.getAssignmentFile());
+            fileService.deleteFile(true, updateAssign.getAssignmentFile());
             fileService.uploadFile(fileName, true, file);
-            System.out.println("fileName : " + fileName);
-
-            assignEntity = AssignmentEntity.builder()
-                            .id(id)
-                            .title(assignment.getTitle())
-                            .content(assignment.getContent())
-                            .assignmentFile(fileName)
-                            .build();
+            updateAssign.updateAssignment(assignment.getTitle(), assignment.getContent(), fileName);
         }
-
-        assignmentRepository.save(assignEntity);
     }
 
     // 과제 삭제
@@ -90,7 +85,6 @@ public class AssignmentService {
         List<AssignmentMapping> assignments = assignmentRepository.findAllProjectedBy();
         List<AssignmentResponseDto.AssignmentList> assignList = new ArrayList<>();
         for(AssignmentMapping assign : assignments) {
-            System.out.println("***" + assign.getRegDate());
             assignList.add(AssignmentResponseDto.AssignmentList.builder()
                                                 .id(assign.getId())
                                                 .title(assign.getTitle())
@@ -102,8 +96,55 @@ public class AssignmentService {
 
     // 과제 상세 데이터
     public AssignmentResponseDto.AssignmentDetail getAssignment(int id) {
-        Optional<AssignmentEntity> assignEntity = assignmentRepository.findById(id);
-        AssignmentResponseDto.AssignmentDetail assignment = assignEntity.get().toDto();
+        AssignmentEntity assignEntity = assignmentRepository.findById(id)
+                                        .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
+
+        AssignmentResponseDto.AssignmentDetail assignment = assignEntity.toDto();
+        assignment.setAssignmentFile(fileService.getUrl()+"/admin/"+assignment.getAssignmentFile());
         return assignment;
+    }
+
+    // 과제 제출 현황 리스트
+    public AssignmentResponseDto.AssignmentSubmitList getSubmitList(int id) {
+        List<UserMapping> students = userRepository.findAllProjectedBy();
+        List<SubmitMapping> submit = submitRepository.findSubmitStudents(id);
+        List<AssignmentResponseDto.SubmitList> submitList = new ArrayList<>();
+        List<String> unSubmitList = new ArrayList<>();
+
+        // 미제출 학생 리스트
+        Map<Integer, String> submitMap = new HashMap<>();   // 제출한 학생 Map
+        for(SubmitMapping data : submit) {
+            submitMap.put(data.getUserId(), data.getNickname());
+        }
+
+        for(UserMapping data : students) {          // submitMap에 학생 ID가 없을 시 추가
+            if(!submitMap.containsKey(data.getId())) {
+                unSubmitList.add(data.getUserNickname());
+            }
+        }
+
+        // 제출 학생 리스트
+        for(SubmitMapping data : submit) {
+            submitList.add(AssignmentResponseDto.SubmitList.builder()
+                            .submitId(data.getId())
+                            .studentName(data.getNickname())
+                            .updateDate(data.getUpdateDate().toString())
+                            .build());
+        }
+
+        return AssignmentResponseDto.AssignmentSubmitList.builder()
+                .submitList(submitList)
+                .unSubmitList(unSubmitList)
+                .build();
+
+    }
+
+    // 오늘 등록한 과제 개수
+    public int getTodayCount() {
+        LocalDate Date = LocalDate.now();
+        LocalTime time = LocalTime.of(0, 0);
+        LocalDateTime dateTime = LocalDateTime.of(Date, time);
+
+        return assignmentRepository.countByUpdateDateAfter(dateTime);
     }
 }
