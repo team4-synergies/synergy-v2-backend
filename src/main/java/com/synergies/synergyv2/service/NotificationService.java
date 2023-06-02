@@ -2,6 +2,7 @@ package com.synergies.synergyv2.service;
 
 
 import com.synergies.synergyv2.common.PageRequestDto;
+import com.synergies.synergyv2.common.PageResponseDto;
 import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.common.response.exception.DefaultException;
 import com.synergies.synergyv2.model.dto.NotificationDto;
@@ -44,7 +45,7 @@ public class NotificationService {
     }
 
 
-    public Page<NotificationDto> getNotificationPaging(PageRequestDto pageRequestDto) throws DefaultException{
+    public PageResponseDto getNotificationPaging(PageRequestDto pageRequestDto) throws DefaultException{
         Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
         Page<NotificationDto> notificationEntityPage;
         if (pageRequestDto.getKeyword() != null) {
@@ -52,6 +53,7 @@ public class NotificationService {
         } else {
             notificationEntityPage = notificationRepository.findAll(pageable).map(notificationEntity -> notificationEntity.toNotificationDto());
         }
-        return notificationEntityPage;
+        PageResponseDto pageResponseDtoPage = new PageResponseDto(pageable, notificationEntityPage);
+        return pageResponseDtoPage;
     }
 }
