@@ -38,10 +38,9 @@ public class AssignmentEntity extends BaseTime {
                 .build();
     }
 
-    public AssignmentEntity updateAssignment(String title, String content, String file) {
+    public void updateAssignment(String title, String content, String file) {
         this.title = title;
         this.content = content;
         this.assignmentFile = file;
-        return this;
     }
 }

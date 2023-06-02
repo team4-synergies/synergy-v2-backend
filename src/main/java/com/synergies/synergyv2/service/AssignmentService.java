@@ -36,7 +36,7 @@ public class AssignmentService {
 
     // 과제 등록
     @Transactional
-    public void createAssignment(AssignmentRequestDto.AssignmentRegister assignment, MultipartFile file) {
+    public void createAssignment(AssignmentRequestDto assignment, MultipartFile file) {
 
         String fileName = "";
 
@@ -55,7 +55,7 @@ public class AssignmentService {
 
     // 과제 수정
     @Transactional
-    public void updateAssignment(int id, AssignmentRequestDto.AssignmentRegister assignment, MultipartFile file) {
+    public void updateAssignment(int id, AssignmentRequestDto assignment, MultipartFile file) {
         Date nowDate = new Date();
         AssignmentEntity updateAssign = assignmentRepository.findById(id)
                                         .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
@@ -118,7 +118,7 @@ public class AssignmentService {
         }
 
         for(UserMapping data : students) {          // submitMap에 학생 ID가 없을 시 추가
-            if(submitMap.containsKey(data.getId())) {
+            if(!submitMap.containsKey(data.getId())) {
                 unSubmitList.add(data.getUserNickname());
             }
         }

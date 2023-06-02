@@ -24,7 +24,7 @@ public class AssignmentAdminController {
 
     @Operation(summary = "과제 등록")
     @PostMapping("/admin")
-    public ResponseEntity<CommonResponse> createAssignment(@ModelAttribute AssignmentRequestDto.AssignmentRegister assignment,
+    public ResponseEntity<CommonResponse> createAssignment(@RequestPart AssignmentRequestDto assignment,
                                                            @RequestPart(value = "file", required = false) MultipartFile file) {
 
         if(!assignment.getTitle().isEmpty()) {
@@ -38,7 +38,7 @@ public class AssignmentAdminController {
     @Operation(summary = "과제 수정")
     @PutMapping("/{id}/admin")
     public ResponseEntity<CommonResponse> updateAssignment(@PathVariable("id") int id,
-                                                           @ModelAttribute AssignmentRequestDto.AssignmentRegister assignment,
+                                                           @RequestPart AssignmentRequestDto assignment,
                                                            @RequestPart(value = "file", required = false) MultipartFile file) {
 
         assignmentService.updateAssignment(id, assignment, file);
@@ -73,11 +73,11 @@ public class AssignmentAdminController {
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, submitLists));
     }
 
-//    @Operation(summary = "오늘 등록한 과제 개수 조회")
-//    @GetMapping("/cnt")
-//    public ResponseEntity<CommonResponse> getCount() {
-//        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignmentService.getTodayCount()));
-//    }
+    @Operation(summary = "오늘 등록한 과제 개수 조회")
+    @GetMapping("/cnt")
+    public ResponseEntity<CommonResponse> getCount() {
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignmentService.getTodayCount()));
+    }
 
     @Operation(summary = "학생이 제출한 과제에 대한 코멘트 등록")
     @PostMapping("/comment/{id}/admin")

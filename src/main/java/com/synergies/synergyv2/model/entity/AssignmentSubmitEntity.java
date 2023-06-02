@@ -34,9 +34,8 @@ public class AssignmentSubmitEntity extends BaseTime {
     private int submitCount;
 
 
-    public AssignmentSubmitEntity updateSubmit(int submitCount) {
+    public void updateSubmit(int submitCount) {
         this.submitCount = submitCount;
-        return this;
     }
 
     public AssignmentResponseDto.SubmitDetail toDto() {

@@ -7,14 +7,12 @@ import java.util.List;
 public class AssignmentResponseDto {
 
     @Getter
-    @Setter
     @Builder
     public static class AssignmentList {
         private int id;
         private String title;
         private String regDate;
     }
-
 
     @Getter
     @Setter
@@ -43,7 +41,6 @@ public class AssignmentResponseDto {
     }
 
     @Getter
-    @Setter
     @Builder
     public static class SubmitList {
         private int submitId;
@@ -52,7 +49,6 @@ public class AssignmentResponseDto {
     }
 
     @Getter
-    @Setter
     @Builder
     public static class AssignmentSubmitList {
         private List<SubmitList> submitList;
@@ -61,7 +57,6 @@ public class AssignmentResponseDto {
     }
 
     @Getter
-    @Setter
     @Builder
     public static class CommentList {
         private int id;

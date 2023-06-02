@@ -30,7 +30,7 @@ public class AssignmentStudentController {
 
     @Operation(summary = "학생 과제 재제출")
     @PutMapping("/{id}/students")
-    public ResponseEntity<CommonResponse> createResubmit(@PathVariable("id") int submitId, @RequestPart MultipartFile file) {
+    public ResponseEntity<CommonResponse> updateSubmit(@PathVariable("id") int submitId, @RequestPart MultipartFile file) {
         if(!file.isEmpty()) {
             assignmentService.updateSubmit(submitId, file);
         }
