@@ -22,7 +22,6 @@ public class TodoController {
     private final TodoService todoService;
     @Operation(summary = "투두 저장")
     @PostMapping
-    @Transactional
     public ResponseEntity<CommonResponse> createTodo(@RequestBody TodoDto todoDto) {
         log.info("TodoAdd");
         todoService.createTodo(todoDto);
