@@ -23,7 +23,6 @@ public class NotificationController {
     private final NotificationService notificationService;
     @Operation(summary = "공지사항 저장")
     @PostMapping
-    @Transactional
     public ResponseEntity<CommonResponse> createNotification(@RequestBody NotificationDto notificationDto){
         log.info("NotificationAdd");
         notificationService.createNotification(notificationDto);
@@ -40,7 +39,6 @@ public class NotificationController {
 
     @Operation(summary = "id로 공지사항 수정")
     @PutMapping("/{id}")
-    @Transactional
     public ResponseEntity<CommonResponse> updateNotification(@PathVariable("id") int id, @RequestBody NotificationDto notificationDto) {
         log.info("NotificationUpdate");
         notificationService.updateNotification(id, notificationDto);

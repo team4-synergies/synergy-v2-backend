@@ -19,7 +19,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
-
+    @Transactional
     public void createNotification(NotificationDto notificationDto) throws DefaultException {
         notificationRepository.save(notificationDto.toNotificationEntity());
     }
