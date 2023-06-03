@@ -41,7 +41,7 @@ public class AssignmentSubmitEntity extends BaseTime {
     public AssignmentResponseDto.SubmitDetail toDto() {
         return AssignmentResponseDto.SubmitDetail.builder()
                 .id(id)
-                .studentName(user.getUserNickname())
+                .studentName(user.getName())
                 .submitFile(submitFile)
                 .submitCount(submitCount)
                 .regDate(getRegDate().toString())

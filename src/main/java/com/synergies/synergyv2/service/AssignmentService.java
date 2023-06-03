@@ -6,10 +6,10 @@ import com.synergies.synergyv2.config.S3.FileService;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
 import com.synergies.synergyv2.model.entity.AssignmentEntity;
+import com.synergies.synergyv2.repository.AssignmentRepository;
 import com.synergies.synergyv2.repository.AssignmentSubmitRepository;
 import com.synergies.synergyv2.repository.UserRepository;
 import com.synergies.synergyv2.repository.mapping.AssignmentMapping;
-import com.synergies.synergyv2.repository.AssignmentRepository;
 import com.synergies.synergyv2.repository.mapping.SubmitMapping;
 import com.synergies.synergyv2.repository.mapping.UserMapping;
 import lombok.RequiredArgsConstructor;
@@ -119,7 +119,7 @@ public class AssignmentService {
 
         for(UserMapping data : students) {          // submitMap에 학생 ID가 없을 시 추가
             if(!submitMap.containsKey(data.getId())) {
-                unSubmitList.add(data.getUserNickname());
+                unSubmitList.add(data.getName());
             }
         }
 
