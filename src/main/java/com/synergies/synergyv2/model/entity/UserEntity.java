@@ -1,29 +1,42 @@
 package com.synergies.synergyv2.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.synergies.synergyv2.auth.CustomUserDetails;
+import com.synergies.synergyv2.auth.Role;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
 @Table(name="USER")
+@ToString
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
-    private Long kakaoId;
+    private String kakaoId;
 
-    private String userNickname;
+    @Getter
+    private String name;
 
     private String email;
 
-    private int role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public String getRoleKey(){
+        return this.role.getKey();
+    }
+
+    public CustomUserDetails toCustomUserDetails(){
+        return new CustomUserDetails(id, kakaoId, name, email, role.name());
+    }
 }
