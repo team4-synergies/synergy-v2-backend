@@ -58,7 +58,6 @@ public class LoginService {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(response.getEntity().getContent());
         KakaoTokenInfoDto kakaoAccessTokenDto = mapper.treeToValue(jsonNode, KakaoTokenInfoDto.class);
-        System.out.println(kakaoAccessTokenDto);
         return kakaoAccessTokenDto;
     }
 

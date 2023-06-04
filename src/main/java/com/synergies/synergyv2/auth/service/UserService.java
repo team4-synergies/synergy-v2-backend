@@ -13,8 +13,6 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void createUser(KakaoUserInfoDto kakaoUserInfoDto) {
-        System.out.println(isDupulicateUser(kakaoUserInfoDto));
-        System.out.println(kakaoUserInfoDto);
         if (!isDupulicateUser(kakaoUserInfoDto)) {
             UserEntity userEntity = kakaoUserInfoDto.toUserEntity();
             userRepository.save(userEntity);
