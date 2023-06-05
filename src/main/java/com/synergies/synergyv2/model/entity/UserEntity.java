@@ -29,14 +29,21 @@ public class UserEntity {
 
     private String email;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public String getRoleKey(){
-        return this.role.getKey();
-    }
-
     public CustomUserDetails toCustomUserDetails(){
         return new CustomUserDetails(id, kakaoId, name, email, role.name());
+    }
+    public void updateStudent(String name, String email){
+        this.name = name;
+        this.email = email;
+        this.role = Role.STUDENT;
+    }
+    public void updateAdmin(String name, String email){
+        this.name = name;
+        this.email = email;
+        this.role = Role.ADMIN;
     }
 }
