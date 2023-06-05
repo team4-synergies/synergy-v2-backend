@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/kakao/**").permitAll()
-                .antMatchers("/api/v1/**").authenticated()
+                .antMatchers("/api/v2/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
