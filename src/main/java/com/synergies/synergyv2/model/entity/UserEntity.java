@@ -36,14 +36,8 @@ public class UserEntity {
     public CustomUserDetails toCustomUserDetails(){
         return new CustomUserDetails(id, kakaoId, name, email, role.name());
     }
-    public void updateStudent(String name, String email){
+    public void update(String name, String email){
         this.name = name;
         this.email = email;
-        this.role = Role.STUDENT;
-    }
-    public void updateAdmin(String name, String email){
-        this.name = name;
-        this.email = email;
-        this.role = Role.ADMIN;
     }
 }

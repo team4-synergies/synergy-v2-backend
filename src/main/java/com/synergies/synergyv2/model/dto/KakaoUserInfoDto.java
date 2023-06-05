@@ -1,5 +1,6 @@
 package com.synergies.synergyv2.model.dto;
 
+import com.synergies.synergyv2.auth.Role;
 import com.synergies.synergyv2.model.entity.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class KakaoUserInfoDto {
                 .kakaoId(userKakaoId)
                 .name(userNickname)
                 .email(email)
+                .role(Role.ADMIN)
                 .build();
     }
     public KakaoUserInfoDto(String userKakaoId, String userNickname, String email){

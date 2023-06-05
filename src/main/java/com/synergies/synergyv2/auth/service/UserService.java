@@ -15,17 +15,24 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void createUser(KakaoUserInfoDto kakaoUserInfoDto) {
-        UserEntity user = userRepository.findByKakaoId(kakaoUserInfoDto.getUserKakaoId()).orElse(kakaoUserInfoDto.toUserEntity());
-        if(user.getRole() != Role.ADMIN){
-            user.updateStudent(kakaoUserInfoDto.getUserNickname(), kakaoUserInfoDto.getEmail());
-        } else{
-            user.updateAdmin(kakaoUserInfoDto.getUserNickname(), kakaoUserInfoDto.getEmail());
+        UserEntity user;
+        if (!isDupulicateUser(kakaoUserInfoDto)) {
+            user = kakaoUserInfoDto.toUserEntity();
+        }
+        else{
+            user = userRepository.findByKakaoId(kakaoUserInfoDto.getUserKakaoId()).orElse(kakaoUserInfoDto.toUserEntity());
+            user.update(kakaoUserInfoDto.getUserNickname(), kakaoUserInfoDto.getEmail());
         }
         userRepository.save(user);
     }
 
-    public Role getUserRole(String kakaoId){
-        UserEntity user = userRepository.findByKakaoId(kakaoId).orElseThrow(()->new UsernameNotFoundException("존재하지 않는 사용자입니다."));
+    private boolean isDupulicateUser(KakaoUserInfoDto kakaoUserInfoDto) {
+        return userRepository.findByKakaoId(kakaoUserInfoDto.getUserKakaoId()).isPresent();
+    }
+    public Role getUserRole(String kakaoId) {
+        UserEntity user = userRepository.findByKakaoId(kakaoId).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
         return user.getRole();
     }
+
+
 }
