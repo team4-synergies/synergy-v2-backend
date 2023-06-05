@@ -1,5 +1,6 @@
 package com.synergies.synergyv2.service;
 
+import com.synergies.synergyv2.auth.Role;
 import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.common.response.exception.DefaultException;
 import com.synergies.synergyv2.config.S3.FileService;
@@ -29,7 +30,7 @@ public class AssignmentStudentService {
     public void createSubmit(int id, MultipartFile file) {
 
         // 유저 데이터 가져오기 (쿠키 생성 시 제거할 것)
-        UserEntity user = new UserEntity(5, 123L, "nickname", "email", 1);
+        UserEntity user = new UserEntity(UUID.randomUUID(), "12345678", "nickname", "email", Role.STUDENT);
 
         // 과제 데이터 가져오기
         AssignmentEntity assignment = assignmentRepository.findById(id)

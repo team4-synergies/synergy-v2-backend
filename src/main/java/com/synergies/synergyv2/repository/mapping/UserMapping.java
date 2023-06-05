@@ -1,6 +1,8 @@
 package com.synergies.synergyv2.repository.mapping;
 
+import java.util.UUID;
+
 public interface UserMapping {
-    Integer getId();
-    String getUserNickname();
+    UUID getId();
+    String getName();
 }

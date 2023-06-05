@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface AssignmentSubmitRepository extends JpaRepository<AssignmentSubmitEntity, Integer> {
-    @Query("SELECT s.id as id, s.updateDate as updateDate, s.user.userNickname as nickname, s.user.id as userId "+
+    @Query("SELECT s.id as id, s.updateDate as updateDate, s.user.name as nickname, s.user.id as userId "+
             "FROM AssignmentSubmitEntity s LEFT OUTER JOIN s.user "+
             "WHERE s.assignment.id = :id "+
             "ORDER BY s.updateDate DESC")

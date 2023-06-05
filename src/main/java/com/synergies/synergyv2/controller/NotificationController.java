@@ -1,5 +1,6 @@
 package com.synergies.synergyv2.controller;
 
+import com.synergies.synergyv2.auth.CustomUserDetails;
 import com.synergies.synergyv2.common.PageRequestDto;
 import com.synergies.synergyv2.common.PageResponseDto;
 import com.synergies.synergyv2.common.response.CommonResponse;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,11 +20,13 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v2/notification")
 public class NotificationController {
+
     private final NotificationService notificationService;
     @Operation(summary = "공지사항 저장")
     @PostMapping
-    public ResponseEntity<CommonResponse> createNotification(@RequestBody NotificationDto notificationDto){
+    public ResponseEntity<CommonResponse> createNotification(@RequestBody NotificationDto notificationDto, @AuthenticationPrincipal CustomUserDetails customUserDetails){
         log.info("NotificationAdd");
+        notificationDto.setRefUserId(customUserDetails.getUserId());
         notificationService.createNotification(notificationDto);
         return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED, "저장 성공")));
     }
