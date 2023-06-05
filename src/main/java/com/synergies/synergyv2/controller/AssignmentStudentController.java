@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v2/assignments")
 public class AssignmentStudentController {
 
