@@ -1,5 +1,6 @@
 package com.synergies.synergyv2.controller;
 
+import com.synergies.synergyv2.auth.CustomUserDetails;
 import com.synergies.synergyv2.common.response.CommonResponse;
 import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
@@ -7,6 +8,7 @@ import com.synergies.synergyv2.service.AssignmentStudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,9 +21,10 @@ public class AssignmentStudentController {
 
     @Operation(summary = "학생 과제 제출")
     @PostMapping("/{id}/students")
-    public ResponseEntity<CommonResponse> createSubmit(@PathVariable("id") int id, @RequestPart MultipartFile file) {
+    public ResponseEntity<CommonResponse> createSubmit(@PathVariable("id") int id, @RequestPart MultipartFile file,
+                                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         if(!file.isEmpty()) {
-            assignmentService.createSubmit(id, file);
+            assignmentService.createSubmit(customUserDetails.getUserId(), id, file);
         }
         // 파일이 없을 때 파일이 없다는 에러 띄우면 좋음
 
@@ -30,9 +33,10 @@ public class AssignmentStudentController {
 
     @Operation(summary = "학생 과제 재제출")
     @PutMapping("/{id}/students")
-    public ResponseEntity<CommonResponse> updateSubmit(@PathVariable("id") int submitId, @RequestPart MultipartFile file) {
+    public ResponseEntity<CommonResponse> updateSubmit(@PathVariable("id") int submitId, @RequestPart MultipartFile file,
+                                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         if(!file.isEmpty()) {
-            assignmentService.updateSubmit(submitId, file);
+            assignmentService.updateSubmit(customUserDetails.getUserId(), submitId, file);
         }
         // 파일이 없을 때 파일이 없다는 에러 띄우면 좋음
 
