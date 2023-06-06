@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -23,16 +22,16 @@ public class TodoController {
     @Operation(summary = "투두 저장")
     @PostMapping
     public ResponseEntity<CommonResponse> createTodo(@RequestBody TodoDto todoDto) {
-        log.info("TodoAdd");
         todoService.createTodo(todoDto);
+        log.info("TodoAdd Success");
         return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED)));
     }
 
     @Operation(summary = "투두 조회")
     @GetMapping
     public ResponseEntity<CommonResponse> getAllTodo() {
-        log.info("TodoList");
         List<TodoDto> list = todoService.getAllTodo();
+        log.info("TodoList Success");
         return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK, list)));
 
     }
@@ -40,24 +39,24 @@ public class TodoController {
     @Operation(summary = "id로 투두 삭제")
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse> deleteTodo(@PathVariable("id") int id){
-        log.info("TodoDelete");
         todoService.deleteTodo(id);
+        log.info("TodoDelete Success");
         return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK)));
     }
 
     @Operation(summary = "id로 투두 수정")
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse> updateTodo(@PathVariable("id") int id, @RequestBody TodoDto todoDto) {
-        log.info("TodoUpdate");
         todoService.updateTodo(id, todoDto);
+        log.info("TodoUpdate Success");
         return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED)));
     }
 
     @Operation(summary = "id로 투두 is_check 수정")
     @PutMapping("/check/{id}")
     public ResponseEntity<CommonResponse> updateTodoIsCheck(@PathVariable("id") int id) {
-        log.info("TodoIsCheckUpdate");
         todoService.updateTodoIsCheck(id);
+        log.info("TodoIsCheckUpdate Success");
         return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED)));
     }
 }
