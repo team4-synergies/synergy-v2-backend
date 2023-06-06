@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
 
-    public List<NotificationDto> getAllNotification() throws DefaultException{
+    public List<NotificationDto> getAllNotification(){
         return notificationRepository.findAll().stream().map(i->i.toNotificationDto()).collect(Collectors.toList());
     }
     @Transactional

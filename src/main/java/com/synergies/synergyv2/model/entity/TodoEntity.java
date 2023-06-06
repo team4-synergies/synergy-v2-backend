@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.UUID;
 
 
 @Entity
@@ -21,7 +22,8 @@ public class TodoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String refUserId;
+
+    private UUID refUserId;
     private String content;
     private int isCheck;
     @CreatedDate
