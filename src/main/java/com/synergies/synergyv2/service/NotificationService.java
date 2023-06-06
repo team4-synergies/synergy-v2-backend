@@ -15,11 +15,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+
+    public List<NotificationDto> getAllNotification() throws DefaultException{
+        return notificationRepository.findAll().stream().map(i->i.toNotificationDto()).collect(Collectors.toList());
+    }
     @Transactional
     public void createNotification(NotificationDto notificationDto) throws DefaultException {
         notificationRepository.save(notificationDto.toNotificationEntity());
@@ -53,7 +59,7 @@ public class NotificationService {
         } else {
             notificationEntityPage = notificationRepository.findAll(pageable).map(notificationEntity -> notificationEntity.toNotificationDto());
         }
-        PageResponseDto pageResponseDtoPage = new PageResponseDto(pageable, notificationEntityPage);
+        PageResponseDto<NotificationDto> pageResponseDtoPage = new PageResponseDto(pageable, notificationEntityPage);
         return pageResponseDtoPage;
     }
 }
