@@ -45,25 +45,37 @@ public class TodoController {
 
     @Operation(summary = "id로 투두 삭제")
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse> deleteTodo(@PathVariable("id") int id){
-        todoService.deleteTodo(id);
-        log.info("TodoDelete Success");
-        return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK)));
+    public ResponseEntity<CommonResponse> deleteTodo(@PathVariable("id") int id,@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        if(todoService.getTodoById(id).getRefUserId().equals(customUserDetails.getUserId())) {
+            todoService.deleteTodo(id);
+            log.info("TodoDelete Success");
+            return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.OK)));
+        } else{
+            return ResponseEntity.ok((CommonResponse.toErrorResponse(CommonCode.UNAUTHORIZED)));
+        }
     }
 
     @Operation(summary = "id로 투두 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<CommonResponse> updateTodo(@PathVariable("id") int id, @RequestBody TodoDto todoDto) {
-        todoService.updateTodo(id, todoDto);
-        log.info("TodoUpdate Success");
-        return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED)));
+    public ResponseEntity<CommonResponse> updateTodo(@PathVariable("id") int id, @RequestBody TodoDto todoDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(todoService.getTodoById(id).getRefUserId().equals(customUserDetails.getUserId())) {
+            todoService.updateTodo(id, todoDto);
+            log.info("TodoUpdate Success");
+            return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED)));
+        }else{
+            return ResponseEntity.ok((CommonResponse.toErrorResponse(CommonCode.UNAUTHORIZED)));
+        }
     }
 
     @Operation(summary = "id로 투두 is_check 수정")
     @PutMapping("/check/{id}")
-    public ResponseEntity<CommonResponse> updateTodoIsCheck(@PathVariable("id") int id) {
-        todoService.updateTodoIsCheck(id);
-        log.info("TodoIsCheckUpdate Success");
-        return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED)));
+    public ResponseEntity<CommonResponse> updateTodoIsCheck(@PathVariable("id") int id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(todoService.getTodoById(id).getRefUserId().equals(customUserDetails.getUserId())) {
+            todoService.updateTodoIsCheck(id);
+            log.info("TodoIsCheckUpdate Success");
+            return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED)));
+        }else{
+            return ResponseEntity.ok((CommonResponse.toErrorResponse(CommonCode.UNAUTHORIZED)));
+        }
     }
 }
