@@ -33,6 +33,9 @@ public class TodoService {
         return list;
     }
 
+    public TodoDto getTodoById(int id) throws DefaultException{
+        return todoRepository.findById(id).get().toTodoDto();
+    }
     @Transactional
     public void deleteTodo(int id){
         try {
