@@ -85,6 +85,7 @@ public class LoginService {
                 .userKakaoId(String.valueOf(returnNode.get("id")))
                 .userNickname(returnNode.get("kakao_account").get("profile").get("nickname").asText())
                 .email(returnNode.get("kakao_account").get("email").asText())
+                .profileImage(returnNode.get("kakao_account").get("profile").get("profile_image_url").asText())
                 .build();
     }
 
