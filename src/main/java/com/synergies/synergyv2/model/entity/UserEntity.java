@@ -33,11 +33,19 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String profileImage;
+
+    private String githubNickname;
+
     public CustomUserDetails toCustomUserDetails(){
-        return new CustomUserDetails(id, kakaoId, name, email, role.name());
+        return new CustomUserDetails(id, kakaoId, name, email, role.name(), profileImage, githubNickname);
     }
-    public void update(String name, String email){
+    public void update(String name, String email, String profileImage){
         this.name = name;
         this.email = email;
+        this.profileImage = profileImage;
+    }
+    public void updateGithubNickname(String githubNickname){
+        this.githubNickname = githubNickname;
     }
 }
