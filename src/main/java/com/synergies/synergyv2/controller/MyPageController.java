@@ -32,6 +32,6 @@ public class MyPageController {
     @PutMapping
     public ResponseEntity<CommonResponse> updateGithubNickname(@RequestBody Map<String, String> githubEmail, @AuthenticationPrincipal CustomUserDetails userDetails){
         myPageService.updateUserGitNickname(userDetails.getUserId(), githubEmail.get("githubEmail"));
-        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK));
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.CREATED));
     }
 }
