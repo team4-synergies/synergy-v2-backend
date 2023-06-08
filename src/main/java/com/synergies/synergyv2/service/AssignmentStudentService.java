@@ -62,11 +62,9 @@ public class AssignmentStudentService {
     public void updateSubmit(UUID userId, int id, MultipartFile file) {
         AssignmentSubmitEntity submitEntity = submitRepository.findById(id)
                                                  .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
-        // 유저 정보 조회
-        UserEntity user = userRepository.findById(userId).get();
 
         // 과제 제출자와 유저가 동일한지 확인
-        if(userId != submitEntity.getUser().toCustomUserDetails().getUserId()) {
+        if(!userId.equals(submitEntity.getUser().toCustomUserDetails().getUserId())) {
             throw new AuthException(AuthErrorCode.NO_PERMISSION);
         }
 
