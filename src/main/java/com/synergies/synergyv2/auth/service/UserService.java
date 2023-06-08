@@ -21,7 +21,7 @@ public class UserService {
         }
         else{
             user = userRepository.findByKakaoId(kakaoUserInfoDto.getUserKakaoId()).orElse(kakaoUserInfoDto.toUserEntity());
-            user.update(kakaoUserInfoDto.getUserNickname(), kakaoUserInfoDto.getEmail());
+            user.update(kakaoUserInfoDto.getUserNickname(), kakaoUserInfoDto.getEmail(), kakaoUserInfoDto.getProfileImage());
         }
         userRepository.save(user);
     }
@@ -33,6 +33,4 @@ public class UserService {
         UserEntity user = userRepository.findByKakaoId(kakaoId).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
         return user.getRole();
     }
-
-
 }

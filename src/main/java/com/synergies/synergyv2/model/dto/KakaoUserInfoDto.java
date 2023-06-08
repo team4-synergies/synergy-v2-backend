@@ -10,7 +10,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Builder
 public class KakaoUserInfoDto {
 
     private String userKakaoId;
@@ -19,17 +18,25 @@ public class KakaoUserInfoDto {
 
     private String email;
 
+    private String profileImage;
+
+    private String githubEmail;
+
     public UserEntity toUserEntity(){
         return UserEntity.builder()
                 .kakaoId(userKakaoId)
                 .name(userNickname)
                 .email(email)
                 .role(Role.ADMIN)
+                .profileImage(profileImage)
                 .build();
     }
-    public KakaoUserInfoDto(String userKakaoId, String userNickname, String email){
+
+    @Builder
+    public KakaoUserInfoDto(String userKakaoId, String userNickname, String email, String profileImage){
         this.userKakaoId = userKakaoId;
         this.userNickname = userNickname;
         this.email = email;
+        this.profileImage = profileImage;
     }
 }
