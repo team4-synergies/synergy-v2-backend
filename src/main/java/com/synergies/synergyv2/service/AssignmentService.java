@@ -35,9 +35,8 @@ public class AssignmentService {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd_hhmmss");
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm");
-    private LocalDate Date = LocalDate.now();
     private LocalTime time = LocalTime.of(0, 0);
-    private LocalDateTime dateTime = LocalDateTime.of(Date, time);
+
 
     // 과제 등록
     @Transactional
@@ -121,7 +120,7 @@ public class AssignmentService {
         List<String> unSubmitList = new ArrayList<>();
 
         // 미제출 학생 리스트
-        Map<Integer, String> submitMap = new HashMap<>();   // 제출한 학생 Map
+        Map<UUID, String> submitMap = new HashMap<>();   // 제출한 학생 Map
         for(SubmitMapping data : submit) {
             submitMap.put(data.getUserId(), data.getNickname());
         }
@@ -150,11 +149,13 @@ public class AssignmentService {
 
     // 오늘 등록한 과제 개수
     public int getTodayCount() {
+        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now(), time);
         return assignmentRepository.countByUpdateDateAfter(dateTime);
     }
 
     // 오늘 등록한 과제 리스트
     public List<AssignmentResponseDto.AssignmentDetail> getTodayAssignment() {
+        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now(), time);
         List<AssignmentEntity> assignments = assignmentRepository.findByUpdateDateAfter(dateTime);
         System.out.println("today : " + LocalDateTime.now());
         List<AssignmentResponseDto.AssignmentDetail> assignmentList = new ArrayList<>();

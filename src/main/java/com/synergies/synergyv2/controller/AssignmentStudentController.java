@@ -51,5 +51,14 @@ public class AssignmentStudentController {
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, submitDetail));
     }
 
+    @Operation(summary = "학생이 제출한 과제 확인")
+    @GetMapping("/submit/{id}/students")
+    public ResponseEntity<CommonResponse> getIsSubmit(@PathVariable("id") int assignmentId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        AssignmentResponseDto.SubmitDetail submit = assignmentService.getIsSubmit(customUserDetails.getUserId(), assignmentId);
+        if(submit == null) {
+            return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, ""));
+        }
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, submit));
+    }
 
 }

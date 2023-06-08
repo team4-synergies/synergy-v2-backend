@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
@@ -27,21 +28,23 @@ public class AssignmentStudentService {
     private final AssignmentRepository assignmentRepository;
     private final UserRepository userRepository;
     private final FileService fileService;
-    
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd_hhmmss");
+    private DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm");
+
     // 학생 과제 제출
     @Transactional
     public void createSubmit(UUID userId, int id, MultipartFile file) {
 
-        // 유저 데이터 가져오기
-        UserEntity user = userRepository.findById(userId)
-                        .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_EXIST_USER));
-
+        // 유저 정보 조회
+        UserEntity user = userRepository.findById(userId).get();
+        
         // 과제 데이터 가져오기
         AssignmentEntity assignment = assignmentRepository.findById(id)
                                     .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
 
         // 파일명
-        String fileName = assignment.getAssignmentFile()+"/"+UUID.randomUUID();
+        String fileName = assignment.getRegDate().format(formatter)+"/"+UUID.randomUUID();
         fileService.uploadFile(fileName, false, file);
 
         AssignmentSubmitEntity submitEntity = AssignmentSubmitEntity.builder()
@@ -59,6 +62,9 @@ public class AssignmentStudentService {
     public void updateSubmit(UUID userId, int id, MultipartFile file) {
         AssignmentSubmitEntity submitEntity = submitRepository.findById(id)
                                                  .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
+        // 유저 정보 조회
+        UserEntity user = userRepository.findById(userId).get();
+
         // 과제 제출자와 유저가 동일한지 확인
         if(userId != submitEntity.getUser().toCustomUserDetails().getUserId()) {
             throw new AuthException(AuthErrorCode.NO_PERMISSION);
@@ -74,7 +80,19 @@ public class AssignmentStudentService {
         AssignmentSubmitEntity submitEntity = submitRepository.findById(id)
                                                 .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
         AssignmentResponseDto.SubmitDetail submitDetail = submitEntity.toDto();
+        submitDetail.setRegDate(submitEntity.getRegDate().format(formatter2));
+        submitDetail.setUpdateDate(submitEntity.getUpdateDate().format(formatter2));
         submitDetail.setSubmitFile(fileService.getUrl()+"/student/"+submitDetail.getSubmitFile());
+        return submitDetail;
+    }
+
+    // 학생이 해당 과제 제출했는지 확인
+    public AssignmentResponseDto.SubmitDetail getIsSubmit(UUID userId, int id) {
+        AssignmentSubmitEntity submit = submitRepository.findByAssignmentIdAndUserId(id, userId);
+        AssignmentResponseDto.SubmitDetail submitDetail = null;
+        if(submit != null) {
+            submitDetail  = submit.toDto();
+        }
         return submitDetail;
     }
 }

@@ -75,7 +75,7 @@ public class AssignmentAdminController {
     }
 
     @Operation(summary = "오늘 등록한 과제 개수 조회")
-    @GetMapping("/cnt")
+    @GetMapping("/todayCount/admin")
     public ResponseEntity<CommonResponse> getCount() {
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, assignmentService.getTodayCount()));
     }
@@ -89,7 +89,7 @@ public class AssignmentAdminController {
     @Operation(summary = "학생이 제출한 과제에 대한 코멘트 등록")
     @PostMapping("/comment/{id}/admin")
     public ResponseEntity<CommonResponse> createComment(@PathVariable("id") int id,
-                                                        @RequestPart String comment) {
+                                                        @RequestBody String comment) {
         commentService.createComment(id, comment);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.CREATED));
     }
