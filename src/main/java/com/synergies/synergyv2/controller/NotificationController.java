@@ -36,10 +36,9 @@ public class NotificationController {
 
     @Operation(summary = "공지사항 저장")
     @PostMapping
-//    , @AuthenticationPrincipal CustomUserDetails customUserDetails
-    public ResponseEntity<CommonResponse> createNotification(@RequestBody NotificationDto notificationDto){
+    public ResponseEntity<CommonResponse> createNotification(@RequestBody NotificationDto notificationDto, @AuthenticationPrincipal CustomUserDetails customUserDetails){
         log.info("NotificationAdd Success");
-//        notificationDto.setRefUserId(customUserDetails.getUserId());
+        notificationDto.setRefUserId(customUserDetails.getUserId());
         notificationService.createNotification(notificationDto);
         return ResponseEntity.ok((CommonResponse.toResponse(CommonCode.CREATED, "저장 성공")));
     }

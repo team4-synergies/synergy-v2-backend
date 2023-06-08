@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,11 +26,16 @@ public class TodoService {
         todoRepository.save(todoDto.toTodoEntity());
     }
 
-    public List<TodoDto> getAllTodo() throws DefaultException{
-        List<TodoDto> list = todoRepository.findAll().stream().map(i -> i.toTodoDto()).collect(Collectors.toList());
+    public List<TodoDto> getAllTodoFindByUuid(UUID uuid) throws DefaultException{
+        List<TodoDto> list = todoRepository.findAllByRefUserId(uuid).stream().map(i -> i.toTodoDto()).collect(Collectors.toList());
+        List<TodoEntity> list2 = todoRepository.findAllByRefUserId(uuid);
+        System.out.println(list2);
         return list;
     }
 
+    public TodoDto getTodoById(int id) throws DefaultException{
+        return todoRepository.findById(id).get().toTodoDto();
+    }
     @Transactional
     public void deleteTodo(int id){
         try {

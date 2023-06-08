@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Builder
 public class TodoDto {
     private int id;
-    private String refUserId;
+
+    private UUID refUserId;
     private String content;
     private int isCheck;
     private LocalDate regDate;

@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -33,6 +34,9 @@ public class AssignmentService {
     private final UserRepository userRepository;
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd_hhmmss");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm");
+    private LocalTime time = LocalTime.of(0, 0);
+
 
     // 과제 등록
     @Transactional
@@ -43,7 +47,7 @@ public class AssignmentService {
         if(assignment.getContent() == null)
             assignment.setContent("");
 
-        if(assignment.getFile() != null) {
+        if(file != null) {
             Date nowDate = new Date();
             fileName = simpleDateFormat.format(nowDate);
             fileService.uploadFile(fileName, true, file);
@@ -82,13 +86,13 @@ public class AssignmentService {
 
     // 과제 리스트
     public List<AssignmentResponseDto.AssignmentList> getAssignmentList() {
-        List<AssignmentMapping> assignments = assignmentRepository.findAllProjectedBy();
+        List<AssignmentMapping> assignments = assignmentRepository.findAllProjectedByOrderByRegDateDesc();
         List<AssignmentResponseDto.AssignmentList> assignList = new ArrayList<>();
         for(AssignmentMapping assign : assignments) {
             assignList.add(AssignmentResponseDto.AssignmentList.builder()
                                                 .id(assign.getId())
                                                 .title(assign.getTitle())
-                                                .regDate((assign.getRegDate()).toString())
+                                                .updateDate(assign.getUpdateDate().toString())
                                                 .build());
         }
         return assignList;
@@ -98,8 +102,12 @@ public class AssignmentService {
     public AssignmentResponseDto.AssignmentDetail getAssignment(int id) {
         AssignmentEntity assignEntity = assignmentRepository.findById(id)
                                         .orElseThrow(() -> new DefaultException(CommonCode.NOT_FOUND));
-
+        String regDate = assignEntity.getRegDate().format(formatter).toString();
+        String updateDate = assignEntity.getUpdateDate().format(formatter).toString();
         AssignmentResponseDto.AssignmentDetail assignment = assignEntity.toDto();
+        assignment.setRegDate(regDate);
+        assignment.setUpdateDate(updateDate);
+
         assignment.setAssignmentFile(fileService.getUrl()+"/admin/"+assignment.getAssignmentFile());
         return assignment;
     }
@@ -112,7 +120,7 @@ public class AssignmentService {
         List<String> unSubmitList = new ArrayList<>();
 
         // 미제출 학생 리스트
-        Map<Integer, String> submitMap = new HashMap<>();   // 제출한 학생 Map
+        Map<UUID, String> submitMap = new HashMap<>();   // 제출한 학생 Map
         for(SubmitMapping data : submit) {
             submitMap.put(data.getUserId(), data.getNickname());
         }
@@ -141,10 +149,29 @@ public class AssignmentService {
 
     // 오늘 등록한 과제 개수
     public int getTodayCount() {
-        LocalDate Date = LocalDate.now();
-        LocalTime time = LocalTime.of(0, 0);
-        LocalDateTime dateTime = LocalDateTime.of(Date, time);
-
+        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now(), time);
         return assignmentRepository.countByUpdateDateAfter(dateTime);
+    }
+
+    // 오늘 등록한 과제 리스트
+    public List<AssignmentResponseDto.AssignmentDetail> getTodayAssignment() {
+        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now(), time);
+        List<AssignmentEntity> assignments = assignmentRepository.findByUpdateDateAfter(dateTime);
+        System.out.println("today : " + LocalDateTime.now());
+        List<AssignmentResponseDto.AssignmentDetail> assignmentList = new ArrayList<>();
+        for(AssignmentEntity assign : assignments) {
+            String regDate = assign.getRegDate().format(formatter).toString();
+            String updateDate = assign.getUpdateDate().format(formatter).toString();
+
+            assignmentList.add(AssignmentResponseDto.AssignmentDetail.builder()
+                                .id(assign.getId())
+                                .title(assign.getTitle())
+                                .content(assign.getContent())
+                                .assignmentFile(assign.getAssignmentFile())
+                                .regDate(regDate)
+                                .updateDate(updateDate)
+                                .build());
+        }
+        return assignmentList;
     }
 }

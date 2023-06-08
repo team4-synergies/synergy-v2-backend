@@ -11,7 +11,7 @@ public class AssignmentResponseDto {
     public static class AssignmentList {
         private int id;
         private String title;
-        private String regDate;
+        private String updateDate;
     }
 
     @Getter

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface AssignmentSubmitRepository extends JpaRepository<AssignmentSubmitEntity, Integer> {
@@ -16,4 +17,5 @@ public interface AssignmentSubmitRepository extends JpaRepository<AssignmentSubm
             "WHERE s.assignment.id = :id "+
             "ORDER BY s.updateDate DESC")
     List<SubmitMapping> findSubmitStudents(@Param("id") int id);
+    AssignmentSubmitEntity findByAssignmentIdAndUserId(int assignmentId, UUID userId);
 }

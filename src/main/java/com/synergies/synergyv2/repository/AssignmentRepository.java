@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface AssignmentRepository extends JpaRepository<AssignmentEntity, Integer> {
-    List<AssignmentMapping> findAllProjectedBy();
+    List<AssignmentMapping> findAllProjectedByOrderByRegDateDesc();
+    List<AssignmentEntity> findByUpdateDateAfter(LocalDateTime data);
     int countByUpdateDateAfter(LocalDateTime date);
 }
