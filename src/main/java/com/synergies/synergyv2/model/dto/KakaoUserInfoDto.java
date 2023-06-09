@@ -27,7 +27,7 @@ public class KakaoUserInfoDto {
                 .kakaoId(userKakaoId)
                 .name(userNickname)
                 .email(email)
-                .role(Role.ADMIN)
+                .role(Role.STUDENT)
                 .profileImage(profileImage)
                 .build();
     }
