@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class AssignmentRequestDto {
     private String title;
     private String content;
-    private MultipartFile file;
 
     public AssignmentEntity toEntity(String fileName) {
         return AssignmentEntity.builder()
