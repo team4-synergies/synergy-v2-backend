@@ -1,17 +1,18 @@
 package com.synergies.synergyv2.service;
 
+import com.synergies.synergyv2.auth.Role;
 import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.common.response.exception.DefaultException;
 import com.synergies.synergyv2.config.S3.FileService;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
 import com.synergies.synergyv2.model.entity.AssignmentEntity;
+import com.synergies.synergyv2.model.entity.UserEntity;
 import com.synergies.synergyv2.repository.AssignmentRepository;
 import com.synergies.synergyv2.repository.AssignmentSubmitRepository;
 import com.synergies.synergyv2.repository.UserRepository;
 import com.synergies.synergyv2.repository.mapping.AssignmentMapping;
 import com.synergies.synergyv2.repository.mapping.SubmitMapping;
-import com.synergies.synergyv2.repository.mapping.UserMapping;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,7 +117,7 @@ public class AssignmentService {
 
     // 과제 제출 현황 리스트
     public AssignmentResponseDto.AssignmentSubmitList getSubmitList(int id) {
-        List<UserMapping> students = userRepository.findAllProjectedBy();
+        List<UserEntity> students = userRepository.findByRole(Role.STUDENT);
         List<SubmitMapping> submit = submitRepository.findSubmitStudents(id);
         List<AssignmentResponseDto.SubmitList> submitList = new ArrayList<>();
         List<String> unSubmitList = new ArrayList<>();
@@ -127,8 +128,8 @@ public class AssignmentService {
             submitMap.put(data.getUserId(), data.getNickname());
         }
 
-        for(UserMapping data : students) {          // submitMap에 학생 ID가 없을 시 추가
-            if(!submitMap.containsKey(data.getId())) {
+        for(UserEntity data : students) {          // submitMap에 학생 ID가 없을 시 추가
+            if(!submitMap.containsKey(data.toCustomUserDetails().getUserId())) {
                 unSubmitList.add(data.getName());
             }
         }
