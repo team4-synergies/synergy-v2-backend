@@ -23,6 +23,7 @@ public class TodoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(columnDefinition = "BINARY(16)")
     private UUID refUserId;
     private String content;
     private int isCheck;

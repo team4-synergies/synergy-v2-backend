@@ -20,6 +20,7 @@ public class NotificationEntity extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(columnDefinition = "BINARY(16)")
     private UUID refUserId;
     private String title;
     private String content;
