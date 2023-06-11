@@ -30,17 +30,13 @@ public class CustomUserDetails implements UserDetails {
     @Getter
     private String profileImage;
 
-    @Getter
-    private String githubEmail;
-
-    public CustomUserDetails(UUID userId, String kakaoId, String nickName, String email, String role, String profileImage, String githubEmail) {
+    public CustomUserDetails(UUID userId, String kakaoId, String nickName, String email, String role, String profileImage) {
         this.userId = userId;
         this.kakaoId = kakaoId;
         this.name = nickName;
         this.email = email;
         this.roles = List.of(role);
         this.profileImage = profileImage;
-        this.githubEmail = githubEmail;
 
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synergies.synergyv2.model.dto.KakaoTokenInfoDto;
 import com.synergies.synergyv2.model.dto.KakaoUserInfoDto;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class LoginService {
 
     @Value("${kakao.config.oauth.client_id}")
@@ -53,10 +55,8 @@ public class LoginService {
         HttpPost post = new HttpPost(RequestUrl);
         post.setEntity(new UrlEncodedFormEntity(postParams));
         HttpResponse response = client.execute(post);
-        int responseCode = response.getStatusLine().getStatusCode();
 
         // JSON 형태 반환값 처리
-
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(response.getEntity().getContent());
         return mapper.treeToValue(jsonNode, KakaoTokenInfoDto.class);
@@ -64,28 +64,25 @@ public class LoginService {
 
     public KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws IOException {
         final String RequestUrl = "https://kapi.kakao.com/v2/user/me";
-        //String CLIENT_ID = K_CLIENT_ID; // REST API KEY
-        //String REDIRECT_URI = K_REDIRECT_URI; // 리다이렉트 URI
-        //String code = autorize_code; // 로그인 과정중 얻은 토큰 값
         final HttpClient client = HttpClientBuilder.create().build();
         final HttpPost post = new HttpPost(RequestUrl);
+
         // add header
         post.addHeader("Authorization", "Bearer " + accessToken);
 
         JsonNode returnNode;
 
-
         HttpResponse response = client.execute(post);
-        int responseCode = response.getStatusLine().getStatusCode();
 
         // JSON 형태 반환값 처리
         ObjectMapper mapper = new ObjectMapper();
         returnNode = mapper.readValue(response.getEntity().getContent(), JsonNode.class);
+        log.info("카카오 로그인 정보 : "+ returnNode);
         return KakaoUserInfoDto.builder()
                 .userKakaoId(String.valueOf(returnNode.get("id")))
-                .userNickname(returnNode.get("kakao_account").get("profile").get("nickname").asText())
-                .email(returnNode.get("kakao_account").get("email").asText())
-                .profileImage(returnNode.get("kakao_account").get("profile").get("profile_image_url").asText())
+                .userNickname(returnNode.get("kakao_account").get("profile").has("nickname") ? returnNode.get("kakao_account").get("profile").get("nickname").asText() : "")
+                .email(returnNode.get("kakao_account").has("email") ? returnNode.get("kakao_account").get("email").asText() : "")
+                .profileImage(returnNode.get("kakao_account").get("profile").has("profile_image_url") ? returnNode.get("kakao_account").get("profile").get("profile_image_url").asText() : "")
                 .build();
     }
 

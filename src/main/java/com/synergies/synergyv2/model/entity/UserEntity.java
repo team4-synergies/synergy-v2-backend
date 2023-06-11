@@ -35,17 +35,12 @@ public class UserEntity {
 
     private String profileImage;
 
-    private String githubNickname;
-
     public CustomUserDetails toCustomUserDetails(){
-        return new CustomUserDetails(id, kakaoId, name, email, role.name(), profileImage, githubNickname);
+        return new CustomUserDetails(id, kakaoId, name, email, role.name(), profileImage);
     }
     public void update(String name, String email, String profileImage){
         this.name = name;
         this.email = email;
         this.profileImage = profileImage;
-    }
-    public void updateGithubNickname(String githubNickname){
-        this.githubNickname = githubNickname;
     }
 }
