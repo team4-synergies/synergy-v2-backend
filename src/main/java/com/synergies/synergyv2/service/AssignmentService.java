@@ -108,7 +108,9 @@ public class AssignmentService {
         assignment.setRegDate(regDate);
         assignment.setUpdateDate(updateDate);
 
-        assignment.setAssignmentFile(fileService.getUrl()+"/admin/"+assignment.getAssignmentFile());
+        if(!assignment.getAssignmentFile().equals("")) {
+            assignment.setAssignmentFile(fileService.getUrl()+"/admin/"+assignment.getAssignmentFile());
+        }
         return assignment;
     }
 

@@ -80,7 +80,10 @@ public class AssignmentStudentService {
         AssignmentResponseDto.SubmitDetail submitDetail = submitEntity.toDto();
         submitDetail.setRegDate(submitEntity.getRegDate().format(formatter2));
         submitDetail.setUpdateDate(submitEntity.getUpdateDate().format(formatter2));
-        submitDetail.setSubmitFile(fileService.getUrl()+"/student/"+submitDetail.getSubmitFile());
+        if(!submitDetail.getSubmitFile().equals("")) {
+            submitDetail.setSubmitFile(fileService.getUrl()+"/student/"+submitDetail.getSubmitFile());
+        }
+        System.out.println(submitDetail.getSubmitFile());
         return submitDetail;
     }
 
