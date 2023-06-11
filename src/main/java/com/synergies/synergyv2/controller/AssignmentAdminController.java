@@ -1,5 +1,6 @@
 package com.synergies.synergyv2.controller;
 
+import com.synergies.synergyv2.auth.SecurityRole;
 import com.synergies.synergyv2.common.response.CommonResponse;
 import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.model.dto.AssignmentRequestDto;
@@ -9,6 +10,7 @@ import com.synergies.synergyv2.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +26,7 @@ public class AssignmentAdminController {
     private final CommentService commentService;
 
     @Operation(summary = "과제 등록")
+    @Secured(SecurityRole.ADMIN)
     @PostMapping("/admin")
     public ResponseEntity<CommonResponse> createAssignment(@RequestPart AssignmentRequestDto assignment,
                                                            @RequestPart(value = "file", required = false) MultipartFile file) {
@@ -37,6 +40,7 @@ public class AssignmentAdminController {
     }
 
     @Operation(summary = "과제 수정")
+    @Secured(SecurityRole.ADMIN)
     @PutMapping("/{id}/admin")
     public ResponseEntity<CommonResponse> updateAssignment(@PathVariable("id") int id,
                                                            @RequestPart AssignmentRequestDto assignment,
@@ -47,6 +51,7 @@ public class AssignmentAdminController {
     }
 
     @Operation(summary = "과제 삭제")
+    @Secured(SecurityRole.ADMIN)
     @DeleteMapping("/{id}/admin")
     public ResponseEntity<CommonResponse> deleteAssignment(@PathVariable("id") int id) {
         assignmentService.deleteAssignment(id);
@@ -68,6 +73,7 @@ public class AssignmentAdminController {
     }
 
     @Operation(summary = "과제 제출 현황 조회")
+    @Secured(SecurityRole.ADMIN)
     @GetMapping("/submit/{id}/admin")
     public ResponseEntity<CommonResponse> getSubmitList(@PathVariable("id") int id) {
         AssignmentResponseDto.AssignmentSubmitList submitLists = assignmentService.getSubmitList(id);
@@ -87,6 +93,7 @@ public class AssignmentAdminController {
     }
 
     @Operation(summary = "학생이 제출한 과제에 대한 코멘트 등록")
+    @Secured(SecurityRole.ADMIN)
     @PostMapping("/comment/{id}/admin")
     public ResponseEntity<CommonResponse> createComment(@PathVariable("id") int id,
                                                         @RequestBody String comment) {
@@ -95,6 +102,7 @@ public class AssignmentAdminController {
     }
 
     @Operation(summary = "학생이 제출한 과제에 대한 코멘트 삭제")
+    @Secured(SecurityRole.ADMIN)
     @DeleteMapping("/comment/{id}/admin")
     public ResponseEntity<CommonResponse> deleteComment(@PathVariable("id") int id) {
         commentService.deleteComment(id);

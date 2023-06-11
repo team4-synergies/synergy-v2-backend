@@ -1,6 +1,7 @@
 package com.synergies.synergyv2.controller;
 
 import com.synergies.synergyv2.auth.CustomUserDetails;
+import com.synergies.synergyv2.auth.SecurityRole;
 import com.synergies.synergyv2.common.PageRequestDto;
 import com.synergies.synergyv2.common.PageResponseDto;
 import com.synergies.synergyv2.common.response.CommonResponse;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +37,7 @@ public class NotificationController {
     }
 
     @Operation(summary = "공지사항 저장")
+    @Secured(SecurityRole.ADMIN)
     @PostMapping
     public ResponseEntity<CommonResponse> createNotification(@RequestBody NotificationDto notificationDto, @AuthenticationPrincipal CustomUserDetails customUserDetails){
         log.info("NotificationAdd Success");
@@ -44,6 +47,7 @@ public class NotificationController {
     }
 
     @Operation(summary = "id로 공지사항 삭제")
+    @Secured(SecurityRole.ADMIN)
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse> deleteNotification(@PathVariable("id") int id) {
         log.info("NotificationDelete Success");
@@ -52,6 +56,7 @@ public class NotificationController {
     }
 
     @Operation(summary = "id로 공지사항 수정")
+    @Secured(SecurityRole.ADMIN)
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse> updateNotification(@PathVariable("id") int id, @RequestBody NotificationDto notificationDto) {
         log.info("NotificationUpdate Success");
