@@ -1,6 +1,7 @@
 package com.synergies.synergyv2.controller;
 
 import com.synergies.synergyv2.auth.CustomUserDetails;
+import com.synergies.synergyv2.auth.SecurityRole;
 import com.synergies.synergyv2.common.response.CommonResponse;
 import com.synergies.synergyv2.common.response.code.CommonCode;
 import com.synergies.synergyv2.model.dto.AssignmentResponseDto;
@@ -8,13 +9,13 @@ import com.synergies.synergyv2.service.AssignmentStudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v2/assignments")
 public class AssignmentStudentController {
 

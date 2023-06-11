@@ -83,7 +83,6 @@ public class AssignmentStudentService {
         if(!submitDetail.getSubmitFile().equals("")) {
             submitDetail.setSubmitFile(fileService.getUrl()+"/student/"+submitDetail.getSubmitFile());
         }
-        System.out.println(submitDetail.getSubmitFile());
         return submitDetail;
     }
 
