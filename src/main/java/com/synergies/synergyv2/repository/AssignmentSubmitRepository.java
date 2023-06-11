@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface AssignmentSubmitRepository extends JpaRepository<AssignmentSubmitEntity, Integer> {
     @Query("SELECT s.id as id, s.updateDate as updateDate, s.user.name as nickname, s.user.id as userId "+
             "FROM AssignmentSubmitEntity s LEFT OUTER JOIN s.user "+
-            "WHERE s.assignment.id = :id "+
+            "WHERE s.assignment.id = :id AND s.user.role='STUDENT' "+
             "ORDER BY s.updateDate DESC")
     List<SubmitMapping> findSubmitStudents(@Param("id") int id);
     AssignmentSubmitEntity findByAssignmentIdAndUserId(int assignmentId, UUID userId);
