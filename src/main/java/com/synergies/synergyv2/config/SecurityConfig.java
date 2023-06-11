@@ -4,6 +4,7 @@ import com.synergies.synergyv2.auth.JwtAuthenticationFilter;
 import com.synergies.synergyv2.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -14,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;

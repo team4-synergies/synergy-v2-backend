@@ -36,7 +36,7 @@ public class UserEntity {
     private String profileImage;
 
     public CustomUserDetails toCustomUserDetails(){
-        return new CustomUserDetails(id, kakaoId, name, email, role.name(), profileImage);
+        return new CustomUserDetails(id, kakaoId, name, email, role, profileImage);
     }
     public void update(String name, String email, String profileImage){
         this.name = name;
