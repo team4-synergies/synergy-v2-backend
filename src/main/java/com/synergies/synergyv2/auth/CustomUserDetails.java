@@ -30,9 +30,6 @@ public class CustomUserDetails implements UserDetails {
     @Getter
     private String profileImage;
 
-    @Getter
-    private String githubEmail;
-
     public CustomUserDetails(UUID userId, String kakaoId, String nickName, String email, String role, String profileImage) {
         this.userId = userId;
         this.kakaoId = kakaoId;
