@@ -3,13 +3,11 @@ package com.synergies.synergyv2.auth;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
@@ -25,17 +23,17 @@ public class CustomUserDetails implements UserDetails {
 
     private String password;
 
-    private final List<String> roles;
+    private final List<SecurityRole> roles;
 
     @Getter
     private String profileImage;
 
-    public CustomUserDetails(UUID userId, String kakaoId, String nickName, String email, String role, String profileImage) {
+    public CustomUserDetails(UUID userId, String kakaoId, String nickName, String email, Role role, String profileImage) {
         this.userId = userId;
         this.kakaoId = kakaoId;
         this.name = nickName;
         this.email = email;
-        this.roles = List.of(role);
+        this.roles = List.of(new SecurityRole(role));
         this.profileImage = profileImage;
 
     }
@@ -43,9 +41,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override   //사용자의 권한 목록 리턴
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        return roles;
     }
 
     @Override
